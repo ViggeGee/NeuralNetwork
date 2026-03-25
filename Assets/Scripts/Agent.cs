@@ -48,10 +48,10 @@ public class Agent : MonoBehaviour
 
     //Mutations
     private bool isMutated = false;
-    public float mutationAmount = 0.8f;
-    public float mutationChance = 0.2f;
 
     //Old
+    //public float mutationAmount = 0.8f;
+    //public float mutationChance = 0.2f;
     //private List<GameObject> edibleFoodList = new List<GameObject>();
     //public float lifeSpan = 0f;
     //public bool isUser = false;

@@ -71,6 +71,15 @@ public class NN : MonoBehaviour
             }
         }
 
+        // Tillämpa aktiveringsfunktionen (Tanh i detta fall) på noderna
+        public void TanhActivation()
+        {
+            for (int i = 0; i < nodes; i++)
+            {
+                nodeArray[i] = (float)System.Math.Tanh(nodeArray[i]);
+            }
+        }
+
         // Mutera lagrets vikter och biases med en viss sannolikhet och mängd
         public void MutateLayer(float mutationChance, float mutationAmount)
         {
@@ -140,9 +149,13 @@ public class NN : MonoBehaviour
                 layers[i].Forward(inputs);
                 layers[i].Activation();
             }
+
+            //Output layer. Begränsa resultatet med tanh för att få mjukare och mer nyanserade värden
             else if (i == layers.Length - 1)
             {
                 layers[i].Forward(layers[i - 1].nodeArray);
+                layers[i].TanhActivation();
+
             }
             else
             {
@@ -153,7 +166,4 @@ public class NN : MonoBehaviour
 
         return (layers[layers.Length - 1].nodeArray);
     }
-
-   
-
 }
