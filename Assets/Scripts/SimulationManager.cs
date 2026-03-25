@@ -21,8 +21,6 @@ public class SimulationManager : MonoBehaviour
         timeSlider.value = 1;
         color = deadMaterial.color;
     }
-
-    // Update is called once per frame
     void Update()
     {
         int timeSpent = (int)Time.time;

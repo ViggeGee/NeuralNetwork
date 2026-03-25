@@ -65,34 +65,24 @@ public class Agent : MonoBehaviour
     private void FixedUpdate()
     {
         //Ifall agenten dör så ska NN reevalueras. Detta görs här
-        if (!isMutated)
-        {
-            MutateAgent();
-            this.transform.localScale = new Vector3(size, size, size);
-            isMutated = true;
-            energy = 10;
-        }
+        CheckAndInitializeMutation();
         ManageEnergy();
-
-        //Sparar array av distanser från nära mat objekt
-        float[] inputsToNN = distances;
-
-        //Skickar in distanserna från nära mat objekt till NN
-        //Sparar sedan outputen från NN i en ny array
-        float[] outputsFromNN = nn.Brain(inputsToNN);
-
-        //Sätter ForwardBackward och LeftRight till värden från NN's output
-        FB = outputsFromNN[0];
-        LR = outputsFromNN[1];
-
-        //flyttar sedan agenten därefter
-        movement.Move(FB, LR);
-
-        //Hämtar nya distanser
-        distances = CreateRayCasts(9, 15);
+        distances = Sense();
+        ThinkAndMove();
     }
 
+    private float[] Sense()
+    {
+        return CreateRayCasts(9, 15);
+    }
 
+    private void ThinkAndMove()
+    {
+        float[] outputsFromNN = nn.Brain(distances);
+        FB = outputsFromNN[0];
+        LR = outputsFromNN[1];
+        movement.Move(FB, LR);
+    }
 
     public void ManageEnergy()
     {
@@ -139,15 +129,10 @@ public class Agent : MonoBehaviour
         GameObject child = Instantiate(agentPrefab, new Vector3(0, 1, 0), Quaternion.identity);
         child.GetComponent<NN>().layers = GetComponent<NN>().CopyLayers();
 
-        //Applicera mutationer om poor performance
+        //För över poor performance counter till nästa barn
         Agent childAgent = child.GetComponent<Agent>();
-        childAgent.consecutivePoorPerformanceCount = 0;
-        childAgent.poorPerformance = false;
-        if (poorPerformance)
-        {
-            childAgent.baseMutationAmount = Mathf.Min(baseMutationAmount + increaseMutationAmount, 2f);
-            childAgent.baseMutationChance = Mathf.Min(baseMutationChance + increaseMutationChance, 0.8f);
-        }
+        childAgent.consecutivePoorPerformanceCount = consecutivePoorPerformanceCount;
+        
 
 
         child.name = "Agent" + " " + reproductionCount;
@@ -206,7 +191,16 @@ public class Agent : MonoBehaviour
         }
         return (distances);
     }
-
+    private void CheckAndInitializeMutation()
+    {
+        if (!isMutated)
+        {
+            MutateAgent();
+            this.transform.localScale = new Vector3(size, size, size);
+            isMutated = true;
+            energy = 10;
+        }
+    }
 
 
     private void MutateAgent()
