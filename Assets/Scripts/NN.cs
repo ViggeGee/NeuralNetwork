@@ -160,7 +160,7 @@ public class NN : MonoBehaviour
             else if (i == layers.Length - 1)
             {
                 layers[i].Forward(layers[i - 1].nodeArray);
-                layers[i].TanhActivation();
+                //layers[i].TanhActivation();
 
             }
             else
