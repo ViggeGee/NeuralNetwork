@@ -31,6 +31,11 @@ public class NN : MonoBehaviour
             biasesArray = new float[nodes];
             nodeArray = new float[nodes];
 
+            XavierInitialization();
+        }
+
+        public void XavierInitialization()
+        {
             //Xavier initialization för att ge en head start
             for (int i = 0; i < nodes; i++)
             {

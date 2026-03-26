@@ -14,7 +14,8 @@ public class Agent : MonoBehaviour
     private float currentMutationChance;
     public bool poorPerformance = false;
     public int consecutivePoorPerformanceCount = 0;
-    private const int maxConsecutivePoorPerformance = 3;
+    private const int consecutivePoorPerformanceThreshold = 3;
+    private const int maxConsecutivePoorPerformanceThreshold = 30;
     public float increaseMutationAmount = 0.1f;
     public float increaseMutationChance = 0.2f;
 
@@ -104,10 +105,14 @@ public class Agent : MonoBehaviour
         {
             consecutivePoorPerformanceCount++;
 
-            if (consecutivePoorPerformanceCount >= maxConsecutivePoorPerformance)
+            if (consecutivePoorPerformanceCount >= consecutivePoorPerformanceThreshold)
             {
                 poorPerformance = true;
+
+                
+
             }
+            
 
             CreateAgentFromOld();
             //Destroy(this.gameObject);
