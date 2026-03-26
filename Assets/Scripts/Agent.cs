@@ -15,13 +15,13 @@ public class Agent : MonoBehaviour
     public bool poorPerformance = false;
     public int consecutivePoorPerformanceCount = 0;
     private const int maxConsecutivePoorPerformance = 3;
-    public float increaseMutationAmount = 0.1f; 
+    public float increaseMutationAmount = 0.1f;
     public float increaseMutationChance = 0.2f;
 
     //Scripts & Components
     public Material deadMat;
     public FoodSpawner foodSpawner;
-    
+
     public NN nn;
     public Movement movement;
 
@@ -36,11 +36,10 @@ public class Agent : MonoBehaviour
     //Stats
     public bool dead = false;
     public float viewDistance = 20;
-    public float energy = 10;
+    public static float energy = 10;
     public float energyGained = 10;
     public float size = 1.0f;
     public float reproductionEnergyGained = 1;
-    public float reproductionEnergy = 0;
     public float reproductionEnergyThreshold = 10;
     public float[] distances = new float[9];
     public bool canEat = true;
@@ -60,12 +59,16 @@ public class Agent : MonoBehaviour
     //float relativeFoodZ;
     private void Start()
     {
-       foodSpawner = FindAnyObjectByType<FoodSpawner>();
+        foodSpawner = FindAnyObjectByType<FoodSpawner>();
+
+        //Ifall agenten dör så ska NN reevalueras. Detta görs här
+        CheckAndInitializeMutation();
     }
     private void FixedUpdate()
     {
-        //Ifall agenten dör så ska NN reevalueras. Detta görs här
-        CheckAndInitializeMutation();
+        if (dead)
+            return;
+
         ManageEnergy();
         distances = Sense();
         ThinkAndMove();
@@ -106,7 +109,6 @@ public class Agent : MonoBehaviour
                 poorPerformance = true;
             }
 
-            reproductionEnergy = 0;
             CreateAgentFromOld();
             //Destroy(this.gameObject);
             Debug.Log("Reevaluated ANN");
@@ -132,14 +134,13 @@ public class Agent : MonoBehaviour
         //För över poor performance counter till nästa barn
         Agent childAgent = child.GetComponent<Agent>();
         childAgent.consecutivePoorPerformanceCount = consecutivePoorPerformanceCount;
-        
+
 
 
         child.name = "Agent" + " " + reproductionCount;
         reproductionCount++;
-        reproductionEnergy = 0;
-        //Destroy(this.gameObject);
 
+        Destroy(this.gameObject);
 
         //Sätt på nytt material för att indikera på död agent
         Renderer[] renderers = GetComponentsInChildren<Renderer>();
@@ -168,12 +169,13 @@ public class Agent : MonoBehaviour
         {
             float angle = ((2 * i + 1 - numRaycasts) * angleBetweenRaycasts / 2);
             Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.up);
-            Vector3 rayDirection = rotation * transform.forward * -1;
+            Vector3 rayDirection = rotation * transform.forward;
 
             Vector3 rayStart = transform.position + Vector3.up * 0.1f;
             if (Physics.Raycast(rayStart, rayDirection, out hit, viewDistance, layerMask))
             {
                 Debug.DrawRay(rayStart, rayDirection * hit.distance, Color.red);
+
                 if (hit.transform.gameObject.tag == "Food")
                 {
                     distances[i] = hit.distance / viewDistance;
@@ -205,31 +207,20 @@ public class Agent : MonoBehaviour
 
     private void MutateAgent()
     {
-        if (mutateMutations)
+        float maxMutationAmount = baseMutationAmount * 3f;
+        float maxMutationChance = 0.8f;
+
+        if (poorPerformance)
         {
-            if (poorPerformance)
-            {
-                currentMutationAmount = baseMutationAmount + increaseMutationAmount;
-                currentMutationChance = baseMutationChance + increaseMutationChance;
-            }
-            else
-            {
-                currentMutationAmount = baseMutationAmount;
-                currentMutationChance = baseMutationChance;
-            }
-
-
-            //mutationAmount += Random.Range(-0.5f, 0.5f) / 100;
-            //mutationChance += Random.Range(-0.5f, 0.5f) / 100;
+            currentMutationAmount = Mathf.Min(baseMutationAmount + increaseMutationAmount, maxMutationAmount);
+            currentMutationChance = Mathf.Min(baseMutationChance + increaseMutationChance, maxMutationChance);
+        }
+        else
+        {
+            currentMutationAmount = baseMutationAmount;
+            currentMutationChance = baseMutationChance;
         }
 
-        //mutationAmount = Mathf.Max(mutationAmount, 0);
-        //mutationChance = Mathf.Max(mutationChance, 0);
-
-        //nn.MutateNetwork(mutationAmount, mutationChance);
-
-        currentMutationAmount = Mathf.Max(currentMutationAmount, 0);
-        currentMutationChance = Mathf.Max(currentMutationChance, 0);
         nn.MutateNetwork(currentMutationChance, currentMutationAmount);
 
     }
@@ -239,7 +230,6 @@ public class Agent : MonoBehaviour
         if (col.gameObject.tag == "Food" && canEat)
         {
             energy += energyGained;
-            reproductionEnergy += reproductionEnergyGained;
             Destroy(col.gameObject);
             foodSpawner.SpawnFood();
 

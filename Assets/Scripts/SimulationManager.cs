@@ -10,6 +10,7 @@ public class SimulationManager : MonoBehaviour
     [SerializeField] Slider timeSlider;
     [SerializeField] Toggle deadAgentToggle;
     [SerializeField] TextMeshProUGUI timeSliderText;
+    [SerializeField] TextMeshProUGUI agentEnergyText;
     [SerializeField] TextMeshProUGUI timeSpentText;
     [SerializeField] TextMeshProUGUI agentNrText;
     [SerializeField] Material deadMaterial;
@@ -26,6 +27,7 @@ public class SimulationManager : MonoBehaviour
         int timeSpent = (int)Time.time;
         timeSpentText.text = FormatTime(timeSpent);
         agentNrText.text = Agent.reproductionCount.ToString();
+        agentEnergyText.text = Agent.energy.ToString();
     }
 
     string FormatTime(int seconds)

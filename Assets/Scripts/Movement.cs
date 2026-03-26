@@ -24,15 +24,18 @@ public class Movement : MonoBehaviour
     }
     public void Move(float FB, float LR)
     {
+        if (!controller.enabled)
+            return;
+
         LR = Mathf.Clamp(LR, -1, 1);
-        FB = Mathf.Clamp(FB, -1, 1);
+        FB = Mathf.Clamp(FB, 0, 1);
 
         //flytta agenten
         
             transform.Rotate(0, LR * rotateSpeed, 0);
 
             Vector3 forward = transform.TransformDirection(Vector3.forward);
-            controller.SimpleMove(forward * speed * FB * -1);
+            controller.SimpleMove(forward * speed * FB);
         
 
         if (controller.isGrounded && playerVelocity.y < 0)

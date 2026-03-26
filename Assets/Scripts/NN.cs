@@ -26,6 +26,7 @@ public class NN : MonoBehaviour
             this.nodes = nodes;
             this.inputs = inputs;
 
+
             weightsArray = new float[nodes, inputs];
             biasesArray = new float[nodes];
             nodeArray = new float[nodes];
