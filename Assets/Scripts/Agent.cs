@@ -207,13 +207,12 @@ public class Agent : MonoBehaviour
 
     private void MutateAgent()
     {
-        float maxMutationAmount = baseMutationAmount * 3f;
-        float maxMutationChance = 0.8f;
+        
 
         if (poorPerformance)
         {
-            currentMutationAmount = Mathf.Min(baseMutationAmount + increaseMutationAmount, maxMutationAmount);
-            currentMutationChance = Mathf.Min(baseMutationChance + increaseMutationChance, maxMutationChance);
+            currentMutationAmount = baseMutationAmount + increaseMutationAmount;
+            currentMutationChance = baseMutationChance + increaseMutationChance;
         }
         else
         {

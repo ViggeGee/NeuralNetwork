@@ -14,7 +14,7 @@ public class FoodSpawner : MonoBehaviour
     }
     public void SpawnFood()
     {
-        Vector3 randomPos = new Vector3(Random.Range(-20f, 20f), 0.5f, Random.Range(-20f, 20f));
+        Vector3 randomPos = new Vector3(Random.Range(-15f, 15f), 0.5f, Random.Range(-15f, 15f));
         Instantiate(foodGO, randomPos, Quaternion.identity);
     }
 }
