@@ -37,12 +37,13 @@ public class NN : MonoBehaviour
         public void XavierInitialization()
         {
             //Xavier initialization för att ge en head start
-            for (int i = 0; i < nodes; i++)
+            for (int i = 0; i < weightsArray.GetLength(0); i++)
             {
-                for (int j = 0; j < inputs; j++)
+                for (int j = 0; j < weightsArray.GetLength(1); j++)
                 {
                     weightsArray[i, j] = Random.Range(-1f, 1f) * Mathf.Sqrt(2f / inputs);
                 }
+                biasesArray[i] = 0f;
             }
         }
 
@@ -131,6 +132,13 @@ public class NN : MonoBehaviour
         }
     }
 
+    public void XavierReset()
+    {
+        foreach (Layer layer in layers)
+        {
+            layer.XavierInitialization();
+        }
+    }
     // Skapa en kopia av lagren i det neurala nätverket
     public Layer[] CopyLayers()
     {

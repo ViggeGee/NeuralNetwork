@@ -212,7 +212,10 @@ public class Agent : MonoBehaviour
 
     private void MutateAgent()
     {
-        
+        if(consecutivePoorPerformanceCount >= maxConsecutivePoorPerformanceThreshold)
+        {
+            nn.XavierReset();
+        }
 
         if (poorPerformance)
         {
