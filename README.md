@@ -21,3 +21,9 @@ I also built a small debug UI that lets you speed up the simulation, toggle visi
 
 - Unity
 - C#
+
+## TODO
+
+- Add elitism to the network
+- Introduce obstacles to the network
+- (Maybe) Adjust the spawning of the food to be placed in a more consistent manner
